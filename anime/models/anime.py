@@ -14,7 +14,7 @@ class Anime(Base):
     name = Column(String(30))
     author = Column(String(30))
 
-    episodes = relationship("Episode", cascade="all, delete-orphan")
+    episodes = relationship("Episode", cascade="all, delete-orphan", back_populates="anime")
 
     @property
     def episodes_count(self):
@@ -25,7 +25,7 @@ class Anime(Base):
         episodes_info = f"{self.episodes_count} episode(s)"
         episodes_list = "\n".join([f"\t{ep}" for ep in self.episodes])
 
-        return "\n".join([title, episodes_info, episodes_list])
+        return "\n".join([title, episodes_info])
 
 
 class Episode(Base):
@@ -36,7 +36,7 @@ class Episode(Base):
 
     anime_id = Column(Integer, ForeignKey("anime.id"), nullable=False)
 
-    anime = relationship("Anime")
+    anime = relationship("Anime", back_populates="episodes")
 
     def __repr__(self):
         return f"{self.number}: {self.name}"
