@@ -22,6 +22,16 @@ class Anime(Base):
     
     def __repr__(self):
         return f"User(id={self.id!r}, name={self.name!r})"
+    
+    
+class Episode(Base):
+    __tablename__ = "episode"
+    id = Column(Integer, primary_key=True)
+    episode_number = Column(Integer(30))
+    name = Column(String(30))
+    duration = Column(Integer(30))
+    
+    
 
 """class Author(Base):
     __tablename__ = "author"
@@ -41,26 +51,45 @@ class User(Base):
         self.nom_utilisateur = nom_utilisateur
         self.mdp = mdp
     
-    def delete(self):
-        print("plop")
-
+    def new_account():
+        if (User.droit == 0) :
+            print("vous n'avez pas les droits")
+        else :
+            print("tu as crée un compte")
     
-    def edit():
+    def edit_account():
+        if (User.droit == 0) :
+            print("vous n'avez pas les droits")
+        else :
+            print("tu modifie un compte")
+    
+    def delete_account(self):
         print("tu as supprimé un compte")
-
         
-class User(Compte):
-    droit = 0
-    def sign_up():
-        print("OOOOO")
-
-    
-class Admin(Compte):
-    droit = 1    
     def new_anime():
-        print("tu as crée un nouveaux anime") 
+        if (User.droit == 0) :
+            print("vous n'avez pas les droits")
+        else :
+            print("tu as crée un nouveaux anime") 
         
-    def new_compte():
-        print("tu as crée un nouveaux compte")
+    def edit_anime():
+        if (User.droit == 0) :
+            print("vous n'avez pas les droits")
+        else :
+            print("tu modifie un anime")
+    
+    def delet_anime():
+        if (User.droit == 0) :
+            print("vous n'avez pas les droits")
+        else :
+            print("tu as supprimée un anime")  
+            
+    def add_episode():
+        if (User.droit == 0) :
+            print("vous n'avez pas les droits")
+        else :
+            print("""ouvre le dossier "base de donnée" pour y insérer une vidéo et qui 
+        va lui donner un nom équivalent au paramétre indiqué
+        exemple : "001 : Je suis Luffy ! Celui qui deviendra Roi des pirates""")
 
     
