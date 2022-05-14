@@ -1,25 +1,26 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May 10 16:47:34 2022
+from sqlalchemy import Column
+from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import relationship
 
-@author: mathi
-"""
+Base = declarative_base()
 
-class Anime:
-    def __init__(self, name, episodes_count, autor, genre):
-        self.name = name 
-        self.episodes_count = episodes_count
-        self.autor = autor
-        self.genre = genre
-        
+
+class Anime(Base):
+    __tablename__ = "anime"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(30))
+    author_id = Column(Integer, ForeignKey("author.id"), nullable=False)
+
     def __repr__(self):
-        return f"{self.name} by {self.autor}"
-    
-    def delete(self):
-        print("tu as supprimé un anime")
-        
-    def edit(self):
-        print("l'anime est modifié")
-        
-    def watch(self):
-        print("l'anime est lu")
+        return f"User(id={self.id!r}, name={self.name!r})"
+
+
+class Episode(Base):
+    __tablename__ = "episode"
+    id = Column(Integer, primary_key=True)
+    episode_number = Column(Integer(30))
+    name = Column(String(30))
+    duration = Column(Integer(30))
