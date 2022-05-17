@@ -41,39 +41,54 @@ class AnimeView(View):
 
         tk.Label(text=f"{self.anime.episodes_count} episodes:").grid(row=1, column=0)
 
-        vscrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL)
-
-        canvas = tk.Canvas(root, yscrollcommand=vscrollbar.set)
-
-        vscrollbar.config(command=canvas.yview)
-
-        scrollable_frame = tk.Frame(canvas, )
-
-        scrollable_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(
-                scrollregion=canvas.bbox("all")
-            )
-        )
-
-        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-
-        # canvas.configure(yscrollcommand=scrollbar.set)
-
         index = 0
         for index, episode in enumerate(self.anime.episodes):
-            tk.Label(scrollable_frame, text=f"{episode.number}: {episode.name}").grid(row=2 + index, column=1)
-            tk.Button(scrollable_frame, text="view").grid(row=2 + index, column=2)
-            tk.Button(scrollable_frame, text="edit",
+            tk.Label(root, text=f"{episode.number}: {episode.name}").grid(row=2 + index, column=1)
+            tk.Button(root, text="view").grid(row=2 + index, column=2)
+            tk.Button(root, text="edit",
                       command=partial(self.controller.edit_episode, episode=episode)).grid(
                 row=2 + index, column=3)
-            tk.Button(scrollable_frame, text="delete",
+            tk.Button(root, text="delete",
                       command=partial(self.controller.delete_episode, episode=episode)).grid(
                 row=2 + index, column=4)
 
-        canvas.grid(row=2, column=0)
+        tk.Button(root, text="Ajouter épisode", command=partial(self.controller.display_add_episode, anime=anime)).grid(
+            row=3 + index, column=0)
 
-        ttk.Scrollbar(root, orient='vertical', command=canvas.yview).grid(row=2, column=1)
+
+        # vscrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL)
+        #
+        # canvas = tk.Canvas(root, yscrollcommand=vscrollbar.set)
+        #
+        # vscrollbar.config(command=canvas.yview)
+        #
+        # scrollable_frame = tk.Frame(canvas, )
+        #
+        # scrollable_frame.bind(
+        #     "<Configure>",
+        #     lambda e: canvas.configure(
+        #         scrollregion=canvas.bbox("all")
+        #     )
+        # )
+        #
+        # canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        #
+        # # canvas.configure(yscrollcommand=scrollbar.set)
+        #
+        # index = 0
+        # for index, episode in enumerate(self.anime.episodes):
+        #     tk.Label(scrollable_frame, text=f"{episode.number}: {episode.name}").grid(row=2 + index, column=1)
+        #     tk.Button(scrollable_frame, text="view").grid(row=2 + index, column=2)
+        #     tk.Button(scrollable_frame, text="edit",
+        #               command=partial(self.controller.edit_episode, episode=episode)).grid(
+        #         row=2 + index, column=3)
+        #     tk.Button(scrollable_frame, text="delete",
+        #               command=partial(self.controller.delete_episode, episode=episode)).grid(
+        #         row=2 + index, column=4)
+        #
+        # canvas.grid(row=2, column=0)
+        #
+        # ttk.Scrollbar(root, orient='vertical', command=canvas.yview).grid(row=2, column=1)
 
         tk.Button(root, text="Ajouter épisode", command=partial(self.controller.display_add_episode, anime=anime)).grid(
             row=3 + index, column=0)
