@@ -9,16 +9,20 @@ from sqlalchemy import select
 
 
 class Controller:
-
+"""permet de initialer la base de donnée"""
+"""juste c quoi engine ?"""
+"""et le .root ?"""
     def __init__(self, engine):
         self.engine = engine
         Base.metadata.create_all(engine)
         self.root = tk.Tk()
 
+"""reset fait quoi concrétement ?"""
     def reset(self):
         self.root.destroy()
         self.root = tk.Tk()
 
+"""add_anime est la fonction qui permet d'ajouter un nouvelle anime à la base de donnée"""
     def add_anime(self, name, author, episodes_list):
         anime = Anime(
             name=name,
