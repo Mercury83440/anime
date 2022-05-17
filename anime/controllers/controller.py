@@ -1,38 +1,41 @@
 import tkinter as tk
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from anime.models.anime import Anime, Episode, Base
 from anime.views.anime_view import AnimeView, AnimesListView, AddAnimeView, AnimeEditView, EpisodeEditView, \
     AddEpisodeView
 
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-
 
 class Controller:
-"""permet de initialer la base de donnée"""
-"""juste c quoi engine ?"""
-"""et le .root ?"""
+    # permet d'initialiser la base de donnée
     def __init__(self, engine):
         self.engine = engine
         Base.metadata.create_all(engine)
         self.root = tk.Tk()
 
-"""reset fait quoi concrétement ?"""
     def reset(self):
+        """
+        Détruit la fenêtre pour s'assurer d'en avoir toujours une seule à la fois.
+        """
         self.root.destroy()
         self.root = tk.Tk()
 
-"""add_anime est la fonction qui permet d'ajouter un nouvelle anime à la base de donnée"""
     def add_anime(self, name, author, episodes_list):
+        """
+        Ajoute un anime dans la base de données.
+        """
+        episodes = []
+        for k, episode_name in enumerate(episodes_list):
+            episodes.append(Episode(
+                number=k + 1,  # pour commencer à 1, pas à 0
+                name=episode_name
+            ))
+
         anime = Anime(
             name=name,
             author=author,
-            episodes=[
-                Episode(
-                    number=k + 1,
-                    name=episode_name
-                ) for k, episode_name in enumerate(episodes_list)
-            ]
+            episodes=episodes
         )
         with Session(self.engine) as session:
             session.add(anime)
@@ -50,12 +53,12 @@ class Controller:
 
     def edit_anime(self, anime):
         self.reset()
-        view = AnimeEditView(self.root, anime, controller=self)
+        _ = AnimeEditView(self.root, anime, controller=self)
         self.root.mainloop()
 
     def edit_episode(self, episode):
         self.reset()
-        view = EpisodeEditView(self.root, episode, controller=self)
+        _ = EpisodeEditView(self.root, episode, controller=self)
         self.root.mainloop()
 
     def delete_anime(self, anime):
@@ -94,19 +97,19 @@ class Controller:
 
     def display_add_anime(self):
         self.reset()
-        view = AddAnimeView(self.root, self)
+        _ = AddAnimeView(self.root, self)
         self.root.mainloop()
 
     def display_add_episode(self, anime):
         self.reset()
-        view = AddEpisodeView(self.root, self, anime)
+        _ = AddEpisodeView(self.root, controller=self, anime=anime)
         self.root.mainloop()
 
     def display_animes_list(self):
         self.reset()
         with Session(self.engine) as session:
             animes = session.scalars(select(Anime))
-            view = AnimesListView(self.root, animes, controller=self)
+            _ = AnimesListView(self.root, animes, controller=self)
             self.root.mainloop()
 
     def display_anime(self, anime_title):

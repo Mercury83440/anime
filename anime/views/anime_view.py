@@ -1,60 +1,41 @@
-#
-# from tkinter import *
-# from tkinter import ttk
-#
-# fenetre = Tk()
-# fenetre.geometry("500x200")
-# fenetre.title("Page user")
-#
-# liste_anime = ttk.Combobox(values=["Choisissez votre anime","anime1", "anime2", "anime3"])
-# liste_anime.grid()
-# liste_anime.current(0)
-# Label(text="Nom de l'anime :").grid(row=0, column=1)
-# Entry().grid(row=0, column=2)
-# Label(text="Nombre d'épisode :").grid(row=1, column=1)
-# Entry().grid(row=1, column=2)
-# Label(text="listes des épisodes :").grid(row=2, column=1)
-# liste_anime = ttk.Combobox(values=["Choisissez votre épisode","001", "002", "003","..."])
-# liste_anime.grid(row=2, column=2)
-# liste_anime.current(0)
-# Button(text="visionner").grid(row=3, column=2)
-# Button(text="Se déconnecter").grid(row=4, column=2)
-#
-# fenetre.mainloop()
 from functools import partial
+from typing import List, TYPE_CHECKING
 
 import tkinter as tk
 from tkinter import ttk
 
+from anime.controllers.controller import Controller
+from anime.models.anime import Anime, Episode
+from anime.views.base import View
 
-class AnimesListView(tk.Frame):
+
+class AnimesListView(View):
     """
     View to display all available animes
     """
 
-    def __init__(self, root, animes, controller):
-        self.controller = controller
+    def __init__(self, root: tk.Tk, animes: List[Anime], controller: Controller):
         self.animes = animes
-        super().__init__(root)
+        super().__init__(root, controller)
         index = 0
         for index, anime in enumerate(animes):
             tk.Label(text=str(anime)).grid(row=index, column=0)
             tk.Button(text="details", command=partial(controller.display_anime, anime_title=anime.name)).grid(row=index,
                                                                                                               column=1)
             tk.Button(text="supprimer", command=partial(controller.delete_anime, anime=anime)).grid(row=index,
-                                                                                                          column=2)
+                                                                                                    column=2)
         tk.Button(text="Ajouter", command=self.controller.display_add_anime).grid(row=index + 1, column=0)
 
 
-class AnimeView(tk.Frame):
+class AnimeView(View):
     """
     The view to display Anime details
     """
 
-    def __init__(self, root, anime, controller):
+    def __init__(self, root: tk.Tk, anime: Anime, controller: Controller):
         self.anime = anime
-        self.controller = controller
-        super().__init__(root)
+
+        super().__init__(root, controller)
         tk.Label(text=f"{self.anime.name} by {self.anime.author}").grid()
         tk.Button(root, text="retour", command=self.controller.display_animes_list).grid(row=0, column=1)
         tk.Button(root, text="edit", command=partial(self.controller.edit_anime, anime=anime)).grid(row=0, column=2)
@@ -84,13 +65,14 @@ class AnimeView(tk.Frame):
         for index, episode in enumerate(self.anime.episodes):
             tk.Label(scrollable_frame, text=f"{episode.number}: {episode.name}").grid(row=2 + index, column=1)
             tk.Button(scrollable_frame, text="view").grid(row=2 + index, column=2)
-            tk.Button(scrollable_frame, text="edit", command=partial(self.controller.edit_episode, episode=episode)).grid(
+            tk.Button(scrollable_frame, text="edit",
+                      command=partial(self.controller.edit_episode, episode=episode)).grid(
                 row=2 + index, column=3)
-            tk.Button(scrollable_frame, text="delete", command=partial(self.controller.delete_episode, episode=episode)).grid(
+            tk.Button(scrollable_frame, text="delete",
+                      command=partial(self.controller.delete_episode, episode=episode)).grid(
                 row=2 + index, column=4)
 
         canvas.grid(row=2, column=0)
-
 
         ttk.Scrollbar(root, orient='vertical', command=canvas.yview).grid(row=2, column=1)
 
@@ -98,12 +80,12 @@ class AnimeView(tk.Frame):
             row=3 + index, column=0)
 
 
-class EpisodeEditView(tk.Frame):
+class EpisodeEditView(View):
 
-    def __init__(self, root, episode, controller):
+    def __init__(self, root: tk.Tk, episode: Episode, controller: Controller):
         self.episode = episode
-        self.controller = controller
-        super().__init__(root)
+
+        super().__init__(root, controller)
 
         tk.Label(root, text="Title: ").grid(row=0, column=0)
         title_entry = tk.Entry(root)
@@ -118,12 +100,12 @@ class EpisodeEditView(tk.Frame):
         tk.Button(text="sauvegarder", command=callback).grid(row=2, column=1)
 
 
-class AnimeEditView(tk.Frame):
+class AnimeEditView(View):
 
-    def __init__(self, root, anime, controller):
+    def __init__(self, root: tk.Tk, anime: Anime, controller: Controller):
         self.anime = anime
-        self.controller = controller
-        super().__init__(root)
+
+        super().__init__(root, controller)
 
         tk.Label(root, text="Title: ").grid(row=0, column=0)
         title_entry = tk.Entry(root)
@@ -143,14 +125,13 @@ class AnimeEditView(tk.Frame):
         tk.Button(text="sauvegarder", command=callback).grid(row=2, column=1)
 
 
-class AddAnimeView(tk.Frame):
+class AddAnimeView(View):
     """
     View to create a new anime
     """
 
-    def __init__(self, root, controller):
-        self.controller = controller
-        super().__init__(root)
+    def __init__(self, root: tk.Tk, controller: Controller):
+        super().__init__(root, controller)
         tk.Label(text="Anime title: ").grid(row=0, column=0)
         title_entry = tk.Entry()
         title_entry.grid(row=0, column=1)
@@ -166,15 +147,14 @@ class AddAnimeView(tk.Frame):
         tk.Button(text="Ajouter", command=callback).grid(row=2, column=0)
 
 
-class AddEpisodeView(tk.Frame):
+class AddEpisodeView(View):
     """
     View to create a new anime
     """
 
-    def __init__(self, root, controller, anime):
-        self.controller = controller
+    def __init__(self, root: tk.Tk, controller: Controller, anime: Anime):
         self.anime = anime
-        super().__init__(root)
+        super().__init__(root, controller)
         tk.Label(text="Episode title: ").grid(row=0, column=0)
         title_entry = tk.Entry()
         title_entry.grid(row=0, column=1)
